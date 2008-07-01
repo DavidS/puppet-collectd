@@ -89,5 +89,11 @@ Puppet::Type.type(:collectd_conf).provide(:parsed,
 
 		sorted_records.values + plugins
 	end
+
+	def self.instances
+		prefetch()
+		@records.find_all { |r| [:plugin_start, :parased].include?(r[:record_type]) }.collect { |r| new(r) }
+	end
+
 end
 		
