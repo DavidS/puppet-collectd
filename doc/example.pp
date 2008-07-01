@@ -9,15 +9,12 @@ include collectd
 
 resources { collectd_conf: purge => true; }
 
-collectd_conf {
+collectd::conf {
 	'FQDNLookup':
-		notify => Service['collectd'],
 		value => 'true';
 	'Server':
-		notify => Service['collectd'],
 		value => [ '"foo" 1002', '"foo3" 2000' ];
 	'LoadPlugin':
-		notify => Service['collectd'],
 		value => [ 'syslog', 'network', 'cpu' ];
 }
 

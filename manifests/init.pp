@@ -26,11 +26,11 @@ class collectd {
 			notify => Service['collectd'];
 	}
 
-	collectd_conf {
+	collectd::conf {
 		'Include':
 			value => [
-				'"/var/lib/puppet/modules/collectd/plugins/*.conf"',
-				'"/var/lib/puppet/modules/collectd/thresholds/*.conf"'
+				'/var/lib/puppet/modules/collectd/plugins/*.conf',
+				'/var/lib/puppet/modules/collectd/thresholds/*.conf'
 			];
 	}
 
@@ -44,6 +44,51 @@ class collectd {
 		}
 		default: {
 			# no changes needed
+		}
+	}
+}
+
+define collectd::conf($value, $ensure = present, $quote = '') {
+
+	case $quote {
+		'': {
+			case $name {
+				'LoadPlugin', 'TypesDB',
+				'Server': {
+					$quote_real = 'no'
+				}
+				'BaseDir', 'Include',
+				'PIDFile', 'PluginDir',
+				'Interval', 'ReadThreads',
+				'Hostname', 'FQDNLookup': {
+					$quote_real = 'yes'
+				}
+				default: {
+					fail("Unknown collectd.conf directive: ${name}")
+				}
+			}
+		}
+		true, false, yes, no: {
+			$quote_real = $quote
+		}
+	}
+
+	case $quote_real {
+		true, yes: {
+			collectd_conf {
+				$name:
+					ensure => $ensure,
+					notify => Service['collectd'],
+					value => gsub($value, '^(.*)$', '"\1"')
+			}
+		}
+		false, no: {
+			collectd_conf {
+				$name:
+					ensure => $ensure,
+					notify => Service['collectd'],
+					value => $value
+			}
 		}
 	}
 }
