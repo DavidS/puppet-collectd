@@ -7,7 +7,23 @@ import "collectd"
 
 include collectd
 
+resources { collectd_conf: purge => true; }
+
 collectd_conf {
-	'BaseDir': value => 'foo';
-	'Server': value => [ '"foo" 1000', '"foo2" 2000' ];
+	'FQDNLookup':
+		notify => Service['collectd'],
+		value => 'true';
+	'Server':
+		notify => Service['collectd'],
+		value => [ '"foo" 1002', '"foo3" 2000' ];
+	'LoadPlugin':
+		notify => Service['collectd'],
+		value => [ 'syslog', 'network', 'cpu' ];
 }
+
+collectd::syslog { 'debug': }
+collectd::logfile {
+	'debug': level => debug;
+	'error': level => err;
+}
+
