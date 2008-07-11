@@ -33,7 +33,7 @@ Puppet::Type.type(:collectd_conf).provide(:parsed,
 			if record[:value].is_a? Array 
 				values = record[:value]
 			end
-			values.collect do |v| "%s %s" % [ record[:name], v ] end.join("\n")
+			values.collect do |v| "%s %s" % [ record[:name], v ] end.sort.join("\n")
 		end
 	end
 
