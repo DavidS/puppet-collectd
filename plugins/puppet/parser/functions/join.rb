@@ -5,7 +5,7 @@
 # $content == "a\nb"
 module Puppet::Parser::Functions
 	newfunction(:join, :type => :rvalue) do |args|
-		args[1].join(args[0])
+		args[1].join(args[0]) rescue "\n"
 	end
 end
 
