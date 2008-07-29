@@ -6,9 +6,8 @@ define collectd::network($listen = '', $server = '', $ttl = '', $forward = 'fals
 				$server ? { '' => '', default => "Server ${server}" },
 				$ttl ? { '' => '', default => "TimeToLive ${ttl}" },
 				$forward ? { '' => '', default => "Forward ${forward}" },
-				$cache_flush ? { '' => '', default => "CacheFlush ${cache_flush}" },
+				$cache_flush ? { '' => '', default => "CacheFlush ${cache_flush}" }
 			]
-		}
 	}
 }
 
