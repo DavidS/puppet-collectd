@@ -1,4 +1,4 @@
-define collectd::plugin() {
+define collectd::plugin($lines = "") {
 	$content = join("\t\n", $lines)
 	file {
 		"/var/lib/puppet/modules/collectd/plugins/${name}.conf":
