@@ -3,7 +3,7 @@
 
 class collectd {
 
-	modules_dir { ['collectd', 'collectd/plugins', 'collectd/thresholds' ]: }
+	libdir { ['collectd', 'collectd/plugins', 'collectd/thresholds' ]: }
 
 	package {
 		'collectd':
@@ -19,9 +19,10 @@ class collectd {
 			require => Package['collectd'];
 	}
 
-	config_file {
+	file {
 		'/etc/collectd/collectd.conf':
 			ensure => present,
+			mode => 0644, owner => root, group => 0,
 			require => Package['collectd'],
 			notify => Service['collectd'];
 	}
@@ -90,5 +91,15 @@ define collectd::conf($value, $ensure = present, $quote = '') {
 					value => $value
 			}
 		}
+	}
+}
+
+define collectd::libdir() {
+	file {
+		"/var/lib/puppet/modules/${name}":
+			source => "puppet:///collectd/empty", # recurse+purge needs empty directory as source
+			checksum => mtime,
+			ignore => '.ignore', # ignore the placeholder
+			recurse => true, purge => true, force => true;
 	}
 }
