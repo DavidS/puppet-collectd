@@ -5,7 +5,7 @@ define collectd::logfile($level, $timestamp = 'true') {
 			lines => [
 				"File \"/var/log/collectd_${name}.log\"",
 				"Timestamp ${timestamp}",
-				"LogLevel ${loglevel}"
+				"LogLevel ${level}"
 			]
 	}
 }
