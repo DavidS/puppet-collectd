@@ -1,4 +1,6 @@
-# generic gsub call
+# collectd/plugins/parser/functions/gsub.rb
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
+
 module Puppet::Parser::Functions
 
 	# thin wrapper around the ruby gsub function

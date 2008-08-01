@@ -1,3 +1,6 @@
+# collectd/manifests/syslog.pp
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
+
 # Define: collectd::syslog
 # A shortcut to specifying the syslog log level. This can be used only once per
 # node.

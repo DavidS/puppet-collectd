@@ -1,3 +1,6 @@
+# collectd/plugins/puppet/provider/collectd_threshold/parsed.rb
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
+
 require 'puppet/provider/parsedfile'
 
 # General notes: This is modelled after the crontab provider. To use the

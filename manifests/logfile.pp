@@ -1,3 +1,5 @@
+# collectd/manifests/libdir.pp
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
 
 # Define: collectd::logfile
 # specifies a logfile for collectd

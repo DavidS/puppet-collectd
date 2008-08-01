@@ -1,4 +1,4 @@
-# collectd/manifests/init.pp - statistics collection and monitoring daemon
+# collectd/manifests/init.pp
 # (C) Copyright: 2008, David Schmitt <david@dasz.at>
 
 # Module: collectd
@@ -56,72 +56,5 @@ class collectd {
 		default: {
 			# no changes needed
 		}
-	}
-}
-
-# Define: collectd::conf
-#
-# Parameters:
-#   namevar	- the name of the collect.conf option
-#   value	- the value to set for this option. Use an array to specify
-#		  multiple values, these will be put on separate lines
-#   ensure	- 'present' or 'absent'
-#   quote	- specify whether the value needs quoting. A default is chosen
-#   		  for known options, if nothing is specified.
-define collectd::conf($value, $ensure = present, $quote = '') {
-
-	case $quote {
-		'': {
-			case $name {
-				'LoadPlugin', 'TypesDB',
-				'Server': {
-					$quote_real = 'no'
-				}
-				'BaseDir', 'Include',
-				'PIDFile', 'PluginDir',
-				'Interval', 'ReadThreads',
-				'Hostname', 'FQDNLookup': {
-					$quote_real = 'yes'
-				}
-				default: {
-					fail("Unknown collectd.conf directive: ${name}")
-				}
-			}
-		}
-		true, false, yes, no: {
-			$quote_real = $quote
-		}
-	}
-
-	case $quote_real {
-		true, yes: {
-			collectd_conf {
-				$name:
-					ensure => $ensure,
-					require => Package['collectd'],
-					notify => Service['collectd'],
-					value => gsub($value, '^(.*)$', '"\1"')
-			}
-		}
-		false, no: {
-			collectd_conf {
-				$name:
-					ensure => $ensure,
-					require => Package['collectd'],
-					notify => Service['collectd'],
-					value => $value
-			}
-		}
-	}
-}
-
-# private, a purged directory to store the various additional configs
-define collectd::libdir() {
-	file {
-		"/var/lib/puppet/modules/${name}":
-			source => "puppet:///collectd/empty", # recurse+purge needs empty directory as source
-			checksum => mtime,
-			ignore => '.ignore', # ignore the placeholder
-			recurse => true, purge => true, force => true;
 	}
 }

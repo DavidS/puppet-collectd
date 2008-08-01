@@ -1,3 +1,5 @@
+# collectd/plugins/puppet/type/collectd_conf.rb
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
 
 Puppet::Type.newtype(:collectd_conf) do
 	@doc = "Manages the basic option statements in a collectd.conf file"

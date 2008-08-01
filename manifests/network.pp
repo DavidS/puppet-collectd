@@ -1,3 +1,5 @@
+# collectd/manifests/network.pp
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
 
 # Define: collectd::network
 # manage the network plugin's parameters

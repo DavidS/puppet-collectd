@@ -1,3 +1,6 @@
+# collectd/manifests/plugin.pp
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
+
 # Define: collectd::plugin
 # A generic wrapper for a plugin configuration. This automatically loads the
 # plugin before it's configuration and notifies the collectd service to reload

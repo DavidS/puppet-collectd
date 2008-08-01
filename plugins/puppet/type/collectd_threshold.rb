@@ -1,3 +1,5 @@
+# collectd/plugins/puppet/type/collectd_threshold.rb
+# (C) Copyright: 2008, David Schmitt <david@dasz.at>
 
 Puppet::Type.newtype(:collectd_threshold) do
 	@doc = "Manages the thresholds of collectd"
