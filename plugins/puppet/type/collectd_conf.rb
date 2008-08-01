@@ -38,6 +38,12 @@ Puppet::Type.newtype(:collectd_conf) do
 				nil
 			end
 		end
+		
+		# disregard the order of values of a single option when
+		# deciding whether the config file needs an update
+		def insync?(is)
+			return is.sort == should.sort
+		end
 	end
 
 	# the file has to be managed before it is touched by us.
