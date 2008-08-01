@@ -1,11 +1,11 @@
 
 Puppet::Type.newtype(:collectd_conf) do
-	@doc = "Manages the basic statements collectd.conf file"
+	@doc = "Manages the basic option statements in a collectd.conf file"
 
 	ensurable
 
 	newparam(:key) do
-		desc "The configuration key"
+		desc "The name of the configuration key"
 		isnamevar
 	end
 
@@ -38,6 +38,7 @@ Puppet::Type.newtype(:collectd_conf) do
 		end
 	end
 
+	# the file has to be managed before it is touched by us.
 	autorequire(:file) { self[:target] }
 end
 

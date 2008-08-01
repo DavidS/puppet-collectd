@@ -1,11 +1,15 @@
-# generic join call
+# join($separator, $values)
+# joins all elements of $values into a single string separated by $separator
 # example:
-# $lines = ["a", "b"]
-# $content = join("\n", $lines)
-# $content == "a\nb"
+# $values = ["a", "b"]
+# join("|", $values) == "a|b"
 module Puppet::Parser::Functions
 	newfunction(:join, :type => :rvalue) do |args|
-		args[1].join(args[0]) rescue "\n"
+		if args[1].is_a?(Array)
+			args[1].join(args[0])
+		else
+			args[1]
+		end
 	end
 end
 

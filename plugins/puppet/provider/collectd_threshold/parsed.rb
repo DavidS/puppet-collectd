@@ -1,5 +1,11 @@
 require 'puppet/provider/parsedfile'
 
+# General notes: This is modelled after the crontab provider. To use the
+# line-based parsing routines of the ParsedFile utility, the file is read
+# line-by-line and in a second pass (self.prefetch_hook()) the lines are
+# coalesced into a tree structure. On write-out, the various to_line() methods
+# know how to create the appropriate lines again.
+
 Puppet::Type.type(:collectd_threshold).provide(:parsed,
 	:parent => Puppet::Provider::ParsedFile,
 	:default_target => "/etc/collectd/thresholds.conf"
@@ -15,10 +21,10 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 		:instance => "Instance",
 	}
 
-
 	text_line :comment, :match => %r{^\s*#}
-
 	text_line :blank, :match => %r{^\s*$}
+
+	######  The various section start and end markers  #############
 
 	##  THRESHOLD  #################################################
 	text_line :threshold_start, :fields => %w{name},
@@ -39,6 +45,9 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 	text_line :plugin_end, :match => %r{^\s*</Plugin>\s*$}
 	
 	##  TYPE  ######################################################
+	# 
+	# this record_line is responsible for the heavy lifting on output.
+	# It'll receive all values to print, as well as the selector as :title.
 	type = record_line :parsed,
 		:fields => %w{name warning_min warning_max failure_min failure_max invert},
 		:optional => %w{name warning_min warning_max failure_min failure_max invert},
@@ -72,7 +81,6 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 	text_line :type_end, :match => %r{^\s*</Type>\s*$}
 
 	##  ASSIGNMENT  ################################################
-
 	assignment = record_line :assignment, :fields => %w{name value},
 		:match => %r{^\s*(\S+)\s+"?([^"\s]+)"?\s*$}
 
@@ -83,20 +91,28 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 		records
 	end
 
+	# part of the provider pattern. This method returns a list of all found
+	# resources
 	def self.instances
 		prefetch()
 		@records.find_all { |r| [:plugin_start, :parased].include?(r[:record_type]) }.collect { |r| new(r) }
 	end
 
-	# Collect DataSource and Instance contstraints into their container
-	# Since they can be scattered all over the place, this has to be done
-	# before everything else
+	
+	# Collect assignments into their container.  Since they can be
+	# scattered all over the place, this has to be done before everything
+	# else.
 	def self.collect_constraints(records)
 		parent_stack = []
 		records.each do |record|
+
+			# :collected marks records as being integrated into
+			# other records
+			record[:collected] = false
+
 			case record[:record_type]
 			when :comment, :blank
-				# ignore
+				# hand through unmodified
 			when :threshold_start, :host_start, :plugin_start, :parsed
 				parent_stack.push(record)
 			when :threshold_end, :host_end, :plugin_end, :type_end
@@ -108,6 +124,7 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 					raise ArgumentError, "Invalid assignment type %s" % record[:name]
 				end
 
+				# slurp up all assignment type records
 				parent_stack.last[type] = record[:value]
 				record[:collected] = true
 			else
@@ -118,9 +135,16 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 		records.reject do |record| record[:collected] end
 	end
 
+	# Flatten the preprocessed records into a list of :parsed records with
+	# correctly set titles.
 	def self.collect_flatten(records)
 		parent_stack = []
 		records.each do |record|
+
+			# :collected marks records as being integrated into
+			# other records
+			record[:collected] = false
+
 			case record[:record_type]
 			when :comment, :blank, :threshold_start, :threshold_end
 				# ignore
@@ -141,6 +165,8 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 		records.reject do |record| record[:collected] end
 	end
 	
+	# Convert a resource stack as created by self.collect_flatten() back
+	# into a valid title value
 	def self.stack_to_title(stack)
 		host = '*'
 		plugin = '*'
@@ -169,6 +195,9 @@ Puppet::Type.type(:collectd_threshold).provide(:parsed,
 		"%s/%s/%s" % [ host, plugin, type ]
 	end
 
+	# Convert a title into a hash with the keys :host, :plugin, :instance,
+	# :type, and :data_source and the respective part of the title as
+	# value. Globbing parts (with a asterisk '*') are not set in the hash.
 	def self.title_to_hash(title)
 		result = {}
 		title =~ /^([^\/]+)\/([^\/:]+)(:[^\/]+)?\/([^\/:]+)(:[^\/]+)?/

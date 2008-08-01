@@ -1,3 +1,11 @@
+# Define: collectd::plugin
+# A generic wrapper for a plugin configuration. This automatically loads the
+# plugin before it's configuration and notifies the collectd service to reload
+# its configs.
+#
+# Parameters:
+#   namevar	- The plugin to configure.
+#   lines	- an array of lines to configure the plugin.
 define collectd::plugin($lines = "") {
 	$content = join("\t\n", $lines)
 	file {

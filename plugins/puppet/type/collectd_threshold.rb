@@ -7,8 +7,8 @@ Puppet::Type.newtype(:collectd_threshold) do
 	newparam(:selector) do
 		desc "This describes the selected datasources in this format:
 			Host '/' Plugin ':' Instance '/' Type ':' DataSource
-			Any and all of those can be replaced by '*' to select
-			all of this kind."
+			Any and all of those, except the Type, can be replaced
+			by '*' to select all of this kind."
 
 		isnamevar
 	end
