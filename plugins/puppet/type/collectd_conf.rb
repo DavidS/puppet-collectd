@@ -37,5 +37,7 @@ Puppet::Type.newtype(:collectd_conf) do
 			end
 		end
 	end
+
+	autorequire(:file) { self[:target] }
 end
 

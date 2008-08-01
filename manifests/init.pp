@@ -79,6 +79,7 @@ define collectd::conf($value, $ensure = present, $quote = '') {
 			collectd_conf {
 				$name:
 					ensure => $ensure,
+					require => Package['collectd'],
 					notify => Service['collectd'],
 					value => gsub($value, '^(.*)$', '"\1"')
 			}
@@ -87,6 +88,7 @@ define collectd::conf($value, $ensure = present, $quote = '') {
 			collectd_conf {
 				$name:
 					ensure => $ensure,
+					require => Package['collectd'],
 					notify => Service['collectd'],
 					value => $value
 			}
