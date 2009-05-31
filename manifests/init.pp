@@ -40,8 +40,8 @@ class collectd {
 	collectd::conf {
 		'Include':
 			value => [
-				'/var/lib/puppet/modules/collectd/plugins/*.conf',
-				'/var/lib/puppet/modules/collectd/thresholds/*.conf'
+				'${module_dir_path}/collectd/plugins/*.conf',
+				'${module_dir_path}/collectd/thresholds/*.conf'
 			];
 	}
 

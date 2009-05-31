@@ -4,7 +4,7 @@
 # private, a purged directory to store the various additional configs
 define collectd::libdir() {
 	file {
-		"/var/lib/puppet/modules/${name}":
+		"${module_dir_path}/${name}":
 			source => "puppet:///collectd/empty", # recurse+purge needs empty directory as source
 			checksum => mtime,
 			ignore => '.ignore', # ignore the placeholder
