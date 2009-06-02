@@ -24,8 +24,8 @@ define collectd::network($listen = '', $server = '', $ttl = '', $forward = 'fals
 	collectd::plugin{
 		'network':
 			lines => [
-				$listen ? { '' => '', default => join('\n', gsub($listen, '.*', 'Listen \\1')) },
-				$server ? { '' => '', default => join('\n', gsub($server, '.*', 'Server \\1')) },
+				$listen ? { '' => '', default => join('\n', regsubst($listen, '.*', 'Listen \\1', 'G', 'U')) },
+				$server ? { '' => '', default => join('\n', regsubst($server, '.*', 'Server \\1', 'G', 'U')) },
 				$ttl ? { '' => '', default => "TimeToLive ${ttl}" },
 				$forward ? { '' => '', default => "Forward ${forward}" },
 				$cache_flush ? { '' => '', default => "CacheFlush ${cache_flush}" }

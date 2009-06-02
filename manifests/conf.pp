@@ -42,7 +42,7 @@ define collectd::conf($value, $ensure = present, $quote = '') {
 					ensure => $ensure,
 					require => Package['collectd'],
 					notify => Service['collectd'],
-					value => gsub($value, '^(.*)$', '"\1"')
+					value => regsubst($value, '^(.*)$', '"\1"', "G", "U")
 			}
 		}
 		false, no: {
